@@ -1,8 +1,3 @@
-// 메뉴 추가
-// 메뉴이름을 서밋하여 리스트에 추가할 수 있다
-// 빈값은 입력할 수 없다
-// 입력된 메뉴에 수정, 삭제 버튼이 만들어진다
-
 const $ = (select) => document.querySelector(select);
 
 function App() {
@@ -26,8 +21,12 @@ function App() {
     `;
   };
 
-  $("#espresso-menu-form").addEventListener("submit", (e) => {
-    e.preventDefault();
+  const updateMenuCount = () => {
+    const menuCount = $("#espresso-menu-list").querySelectorAll("li").length;
+    $(".menu-count").innerText = `총 ${menuCount}개`;
+  };
+
+  const addMenuItem = () => {
     const menuName = $("#espresso-menu-name").value;
 
     if (menuName === "") {
@@ -39,11 +38,40 @@ function App() {
       menuListItem(menuName)
     );
     $("#espresso-menu-name").value = "";
+
+    updateMenuCount();
+  };
+
+  const updateMenuName = (e) => {
+    const $menuName = e.target.closest("li").querySelector(".menu-name");
+    const updatedMenuName = prompt("메뉴명을 수정하세요", $menuName.innerText);
+    if (updatedMenuName) {
+      $menuName.innerText = updatedMenuName;
+    }
+  };
+
+  const removeMenuName = (e) => {
+    if (confirm("정말 삭제하시겠습니까?")) {
+      e.target.closest("li").remove();
+      updateMenuCount();
+    }
+  };
+
+  $("#espresso-menu-list").addEventListener("click", (e) => {
+    if (e.target.classList.contains("menu-edit-button")) {
+      updateMenuName(e);
+    }
+    if (e.target.classList.contains("menu-remove-button")) {
+      removeMenuName(e);
+    }
   });
 
-  $("#espresso-menu-submit-button").addEventListener("click", () => {
-    console.log("o");
+  $("#espresso-menu-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addMenuItem();
   });
+
+  $("#espresso-menu-submit-button").addEventListener("click", addMenuItem);
 }
 
 App();
